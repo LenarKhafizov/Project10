@@ -1,8 +1,9 @@
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-public class Basket {
+import java.io.*;
+
+
+public class Basket implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     private String[] products;
     private int[] prices;
     private String[] units;
@@ -13,6 +14,7 @@ public class Basket {
         this.prices = prices;
         this.units = units;
     }
+
     public int getCounts(int i) {
         return counts[i];
     }
@@ -34,32 +36,28 @@ public class Basket {
         }
         System.out.println("Общая сумма покупки: " + productSumAll + " руб.");
     }
-    public void saveTxt(File textFile) throws IOException {
-        try (PrintWriter out = new PrintWriter(textFile)) {
-            byte[] bytes = new byte[counts.length];
-            for (int e = 0; e < counts.length; e++) {
-                bytes[e]= (byte) counts[e];
-                out.print(bytes[e] + " ");
-            }
+
+    public void saveBin(File binFile) {
+        try (FileOutputStream fos = new FileOutputStream(binFile);
+             ObjectOutputStream oos = new ObjectOutputStream(fos))
+        {
+            oos.writeObject(this);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }
-    public void loadFromTxtFile(File textFile) throws IOException {
-        try (FileInputStream f = new FileInputStream(textFile)) {
-            byte[] bytes = new byte[(char)textFile.length()];
-            f.read(bytes);
-            String inputFromFile = "";
-            for (int i = 0; i < bytes.length; i++) {
-                char s = (char) bytes[i];
-                inputFromFile = inputFromFile + s; //
-            }
-            String[] parts = inputFromFile.split(" ");
-            for (int i = 0; i < parts.length; i++) {
-                counts[i] = Integer.parseInt(parts[i]);
-                }
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
+
+    public void loadFromBinFile(File binFile) {
+        try (FileInputStream fis = new FileInputStream(binFile);
+             ObjectInputStream ois = new ObjectInputStream(fis))
+        {
+            Basket basketLoad = (Basket) ois.readObject();
+            this.products = basketLoad.products;
+            this.prices = basketLoad.prices;
+            this.units = basketLoad.units;
+            counts = basketLoad.counts;
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.printf(ex.getMessage());
+       }
     }
 }

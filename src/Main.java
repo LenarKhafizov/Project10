@@ -9,12 +9,13 @@ public class Main {
         int[] prices = {55, 79, 95, 110};
         String[] units ={"буханка", "литр", "кг", "кг"};
         Basket basket = new Basket(products, prices, units);
-        File textFile = new File("basket.txt");
-        if (!textFile.exists()) {
-            textFile.createNewFile();
+        File binFile = new File("basket.bin");
+        if (!binFile.exists()) {
+            binFile.createNewFile();
         } else {
-            basket.loadFromTxtFile(textFile);
-        }
+            basket.loadFromBinFile(binFile);
+            }
+
         System.out.println("Список товаров, доступных для покупки:");
         for (int i = 0; i < products.length; i++) {
             int j = i + 1;
@@ -33,6 +34,7 @@ public class Main {
             basket.addToCart(productNumber, productCount);
         }
         basket.printCart();
-        basket.saveTxt(textFile);
+        basket.saveBin(binFile);
     }
+
 }
