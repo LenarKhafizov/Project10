@@ -1,6 +1,11 @@
+package ru.netology;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+
+import static java.lang.Integer.*;
+
 public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("\t Домашнее задание по теме: " + "\"Потоки ввода-вывода. Работа с файлами. Сериализация.\"");
@@ -9,11 +14,15 @@ public class Main {
         int[] prices = {55, 79, 95, 110};
         String[] units ={"буханка", "литр", "кг", "кг"};
         Basket basket = new Basket(products, prices, units);
-        File textFile = new File("basket.txt");
-        if (!textFile.exists()) {
-            textFile.createNewFile();
+        ClientLog clientLog = new ClientLog();  //
+        File csvFile = new File("log.csv");
+        if (!csvFile.exists()) csvFile.createNewFile();
+
+        File jsonFile = new File("basket.json");
+        if (!jsonFile.exists()) {
+            jsonFile.createNewFile();
         } else {
-            basket.loadFromTxtFile(textFile);
+            basket.loadFromJsonFile(jsonFile);
         }
         System.out.println("Список товаров, доступных для покупки:");
         for (int i = 0; i < products.length; i++) {
@@ -28,11 +37,13 @@ public class Main {
                 break;
             }
             String[] parts = inputString.split(" ");
-            int productNumber = Integer.parseInt(parts[0]);
-            int productCount = Integer.parseInt(parts[1]);
+            int productNumber = parseInt(parts[0]);
+            int productCount = parseInt(parts[1]);
             basket.addToCart(productNumber, productCount);
+            clientLog.log(productNumber,productCount);
         }
         basket.printCart();
-        basket.saveTxt(textFile);
+        basket.saveJson(jsonFile);
+        clientLog.exportAsCSV(csvFile);
     }
 }
