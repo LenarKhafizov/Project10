@@ -14,7 +14,8 @@ public class Main {
         int[] prices = {55, 79, 95, 110};
         String[] units ={"буханка", "литр", "кг", "кг"};
         Basket basket = new Basket(products, prices, units);
-        ClientLog clientLog = new ClientLog();  //
+        ClientLog clientLog = new ClientLog();
+
         File csvFile = new File("log.csv");
         if (!csvFile.exists()) csvFile.createNewFile();
 

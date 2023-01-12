@@ -1,16 +1,15 @@
 package ru.netology;
 
-import jdk.nashorn.internal.parser.JSONParser;
-import org.json.simple.JSONObject;
 import java.io.*;
-import java.text.ParseException;
+import java.util.Scanner;
+import com.google.gson.Gson;
 
 public class Basket implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    final private String[] products;
-    final private int[] prices;
-    final private String[] units;
+    private String[] products;
+    private int[] prices;
+    private String[] units;
     private int[] counts = {0, 0, 0, 0};
 
     public Basket(String[] products, int[] prices, String[] units) {
@@ -42,31 +41,21 @@ public class Basket implements Serializable {
     }
 
     public void saveJson(File jsonFile) throws IOException {
-        JSONObject basketJson = new JSONObject();
-        basketJson.put("product1", products[0]);
-        basketJson.put("product2", products[1]);
-        basketJson.put("product3", products[2]);
-        basketJson.put("product4", products[3]);
-        basketJson.put("price1", prices[0]);
-        basketJson.put("price2", prices[1]);
-        basketJson.put("price3", prices[2]);
-        basketJson.put("price4", prices[3]);
-        basketJson.put("unit1", units[0]);
-        basketJson.put("unit2", units[1]);
-        basketJson.put("unit3", units[2]);
-        basketJson.put("unit4", units[3]);
-        basketJson.put("count1", counts[0]);
-        basketJson.put("count2", counts[1]);
-        basketJson.put("count3", counts[2]);
-        basketJson.put("count4", counts[3]);
-        try (FileWriter file = new FileWriter(jsonFile)) {
-            file.write(basketJson.toJSONString());
-            file.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+        try (PrintWriter out = new PrintWriter(jsonFile)) {
+            Gson gson = new Gson();
+            String json = gson.toJson(this);
+            out.println(json);
         }
     }
     public void loadFromJsonFile(File jsonFile) throws IOException {
-
+        try (Scanner scanner = new Scanner(jsonFile)) {
+            Gson gson = new Gson();
+            String json = scanner.nextLine();
+            Basket basketLoad = gson.fromJson(json, Basket.class);
+            this.products = basketLoad.products;
+            this.prices = basketLoad.prices;
+            this.units = basketLoad.units;
+            this.counts = basketLoad.counts;
+        }
     }
 }
