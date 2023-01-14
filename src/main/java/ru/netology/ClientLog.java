@@ -21,9 +21,9 @@ public class ClientLog {
 
     public void exportAsCSV(File csvFile) {
         String operations = "productNum" + "," + "amount";
-        for (int i = 0; i < clientOperations.size(); i++) {
+        for (Integer clientOperation : clientOperations) {
             operations = operations + ",";
-            operations = operations + clientOperations.get(i).toString();
+            operations = operations + clientOperation.toString();
         }
         String[] operationsString = operations.split(",");
         try (CSVWriter writer = new CSVWriter(new FileWriter(csvFile))) {
@@ -31,9 +31,5 @@ public class ClientLog {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public int getClientOperations(int i) {
-        return clientOperations.get(i);
     }
 }

@@ -17,7 +17,8 @@ public class Basket implements Serializable {
         this.prices = prices;
         this.units = units;
     }
-
+    private Basket() {
+    }
     public int getCounts(int i) {
         return counts[i];
     }
@@ -39,7 +40,23 @@ public class Basket implements Serializable {
         }
         System.out.println("Общая сумма покупки: " + productSumAll + " руб.");
     }
-
+    public void saveTxt(File file) throws IOException {
+        try (PrintWriter out = new PrintWriter(file)) {
+            out.println(products.length);
+            for (String product : products) {
+                out.println(product);
+            }
+            for (int price : prices) {
+                out.println(price);
+            }
+            for (String unit : units) {
+                out.println(unit);
+            }
+            for (int count : counts) {
+                out.println(count);
+            }
+        }
+    }
     public void saveJson(File jsonFile) throws IOException {
         try (PrintWriter out = new PrintWriter(jsonFile)) {
             Gson gson = new Gson();
@@ -47,15 +64,36 @@ public class Basket implements Serializable {
             out.println(json);
         }
     }
-    public void loadFromJsonFile(File jsonFile) throws IOException {
+    public static Basket loadFromTxtFile(File textFile) throws IOException {
+        try (Scanner scanner = new Scanner(textFile)) {
+            Basket basket = new Basket();
+            int size = Integer.parseInt(scanner.nextLine());
+            basket.products = new String[size];
+            basket.prices = new int[size];
+            basket.units = new String[size];
+            basket.counts = new int[size];
+
+            for (int i = 0; i < basket.products.length; i++) {
+                basket.products[i] = scanner.nextLine();
+            }
+            for (int i = 0; i < basket.products.length; i++) {
+                basket.prices[i] = Integer.parseInt(scanner.nextLine());
+            }
+            for (int i = 0; i < basket.products.length; i++) {
+                basket.units[i] = scanner.nextLine();
+            }
+            for (int i = 0; i < basket.products.length; i++) {
+                basket.counts[i] = Integer.parseInt(scanner.nextLine());
+            }
+            return basket;
+        }
+    }
+    public static Basket loadFromJsonFile(File jsonFile) throws IOException {
         try (Scanner scanner = new Scanner(jsonFile)) {
             Gson gson = new Gson();
             String json = scanner.nextLine();
-            Basket basketLoad = gson.fromJson(json, Basket.class);
-            this.products = basketLoad.products;
-            this.prices = basketLoad.prices;
-            this.units = basketLoad.units;
-            this.counts = basketLoad.counts;
+            Basket basket = gson.fromJson(json, Basket.class);
+            return basket;
         }
     }
 }
